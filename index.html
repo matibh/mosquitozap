@@ -100,7 +100,7 @@ const seamMat=new THREE.MeshStandardMaterial({color:0x607467,roughness:.9});
 function loftZ(parent,rings,material,segments=32){
  const verts=[],indices=[];
  rings.forEach(r=>{for(let i=0;i<=segments;i++){const a=i/segments*Math.PI*2;verts.push(r.x+Math.cos(a)*r.rx,r.y+Math.sin(a)*r.ry,r.z)}});
- for(let j=0;j<rings.length-1;j++)for(let i=0;i<segments;i++){const a=j*(segments+1)+i,b=a+segments+1;indices.push(a,a+1,b,b,a+1,b+1)}
+ for(let j=0;j<rings.length-1;j++)for(let i=0;i<segments;i++){const a=j*(segments+1)+i,b=a+segments+1;indices.push(a,b,a+1,b,b+1,a+1)}
  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));geo.setIndex(indices);geo.computeVertexNormals();
  const m=new THREE.Mesh(geo,material);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
 }
