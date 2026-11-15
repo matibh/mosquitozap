@@ -77,7 +77,7 @@ h1{font-size:clamp(50px,10vw,74px);letter-spacing:-.045em;text-shadow:0 8px 40px
 import * as THREE from 'three';
 const mount=document.querySelector('#game');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x18231d);scene.fog=new THREE.Fog(0x18231d,12,26);
-const camera=new THREE.PerspectiveCamera(54,innerWidth/innerHeight,.1,60);camera.position.set(0,2.75,7.9);camera.lookAt(0,.88,-.55);
+const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,.1,60);camera.position.set(0,3.35,8.15);camera.lookAt(0,.78,-.65);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;mount.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xe6d7c4,0x241a16,1.8));
 const key=new THREE.DirectionalLight(0xffd3a1,3.1);key.position.set(-3,8,5);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.bias=-0.00018;key.shadow.normalBias=0.025;scene.add(key);
@@ -91,47 +91,46 @@ for(let i=0;i<9;i++){const grain=new THREE.Mesh(new THREE.BoxGeometry(8.2,.006,.
 function capsuleBetween(a,b,r1,r2,material){const d=new THREE.Vector3().subVectors(b,a);const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r2,r1,d.length(),16,1),material);mesh.position.copy(a).add(b).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);return mesh}
 function ellipsoid(parent,pos,scale,material){const m=new THREE.Mesh(new THREE.SphereGeometry(1,24,16),material);m.position.set(...pos);m.scale.set(...scale);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
 const arms=[];
-const skinBase=new THREE.MeshStandardMaterial({color:0xc98d6d,roughness:.72});
-const skinTop=new THREE.MeshStandardMaterial({color:0xe0a482,roughness:.68});
-const skinShadow=new THREE.MeshStandardMaterial({color:0xb9785e,roughness:.82});
-const nailMat=new THREE.MeshStandardMaterial({color:0xe9c5b4,roughness:.42});
+const skinBase=new THREE.MeshStandardMaterial({color:0xc98b6b,roughness:.78});
+const skinTop=new THREE.MeshStandardMaterial({color:0xe0a483,roughness:.7});
+const skinShade=new THREE.MeshStandardMaterial({color:0xb97860,roughness:.85});
+const nailMat=new THREE.MeshStandardMaterial({color:0xe9c6b7,roughness:.4});
 const sleeveMat=new THREE.MeshStandardMaterial({color:0x293d35,roughness:.94});
-const seamMat=new THREE.MeshStandardMaterial({color:0x607467,roughness:.9});
-function loftZ(parent,rings,material,segments=32){
- const verts=[],indices=[];
- rings.forEach(r=>{for(let i=0;i<=segments;i++){const a=i/segments*Math.PI*2;verts.push(r.x+Math.cos(a)*r.rx,r.y+Math.sin(a)*r.ry,r.z)}});
- for(let j=0;j<rings.length-1;j++)for(let i=0;i<segments;i++){const a=j*(segments+1)+i,b=a+segments+1;indices.push(a,b,a+1,b,b+1,a+1)}
- const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));geo.setIndex(indices);geo.computeVertexNormals();
- const m=new THREE.Mesh(geo,material);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
+const cuffMat=new THREE.MeshStandardMaterial({color:0x53685b,roughness:.9});
+function part(parent,pos,scale,material,rotZ=0){
+ const m=new THREE.Mesh(new THREE.SphereGeometry(1,40,28),material);
+ m.position.set(...pos);m.scale.set(...scale);m.rotation.z=rotZ;m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
 }
-function softPart(parent,pos,scale,material,rotZ=0){
- const m=new THREE.Mesh(new THREE.SphereGeometry(1,32,24),material);m.position.set(...pos);m.scale.set(...scale);m.rotation.z=rotZ;m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
+function limb(parent,a,b,rA,rB,material){
+ const start=new THREE.Vector3(...a),end=new THREE.Vector3(...b),dir=end.clone().sub(start);
+ const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rB,rA,dir.length(),32,1),material);
+ mesh.position.copy(start).add(end).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
+ mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);
+ part(parent,a,[rA,rA,rA],material);part(parent,b,[rB,rB,rB],material);return mesh;
 }
-function makeFinger(parent,x,z,len,width){
- const y=.91;
- const sections=[{z:z+len*.27,l:len*.43,r:width},{z:z-len*.07,l:len*.34,r:width*.9},{z:z-len*.34,l:len*.28,r:width*.73}];
- sections.forEach((s,i)=>{const p=new THREE.Mesh(new THREE.CapsuleGeometry(s.r,s.l,5,12),skinTop);p.position.set(x,y-.012-i*.002,s.z);p.rotation.x=Math.PI/2+.035;p.castShadow=true;p.receiveShadow=true;parent.add(p)});
- softPart(parent,[x,y+.039,z-len*.49],[width*.57,.012,width*.105],nailMat);
- for(let k=0;k<2;k++){const fold=new THREE.Mesh(new THREE.TorusGeometry(width*.48,.004,5,14),skinShadow);fold.position.set(x,y+.045,z+len*(.04-k*.19));fold.rotation.x=Math.PI/2;fold.scale.set(1,.52,1);parent.add(fold)}
+function finger(parent,x,z,len,width,angle=0){
+ const y=.91,m=new THREE.Mesh(new THREE.CapsuleGeometry(width,len,8,20),skinTop);
+ m.position.set(x,y,z-len*.34);m.rotation.x=Math.PI/2;m.rotation.z=angle;m.castShadow=true;m.receiveShadow=true;parent.add(m);
+ part(parent,[x,y+.043,z-len*.67],[width*.58,.012,width*.24],nailMat,angle);
+ for(let k=0;k<2;k++){const line=new THREE.Mesh(new THREE.TorusGeometry(width*.62,.0035,5,16),skinShade);line.position.set(x,y+.044,z-len*(.20+k*.20));line.rotation.x=Math.PI/2;line.scale.set(1,.48,1);parent.add(line)}
 }
 for(const side of [-1,1]){
  const g=new THREE.Group();scene.add(g);
- loftZ(g,[{x:side*.79,y:.68,z:2.65,rx:.49,ry:.34},{x:side*.77,y:.69,z:2.35,rx:.45,ry:.32},{x:side*.73,y:.70,z:2.08,rx:.405,ry:.30}],sleeveMat);
- loftZ(g,[{x:side*.73,y:.70,z:2.19,rx:.414,ry:.305},{x:side*.73,y:.70,z:2.10,rx:.405,ry:.30}],seamMat);
- loftZ(g,[
- {x:side*.68,y:.76,z:2.16,rx:.335,ry:.235},{x:side*.67,y:.78,z:1.75,rx:.345,ry:.225},
- {x:side*.66,y:.80,z:1.25,rx:.325,ry:.205},{x:side*.65,y:.82,z:.78,rx:.292,ry:.18},
- {x:side*.65,y:.84,z:.34,rx:.255,ry:.155},{x:side*.65,y:.86,z:.02,rx:.245,ry:.145}
- ],skinBase);
- softPart(g,[side*.65,.965,1.14],[.205,.035,.78],skinTop,side*.025);
- softPart(g,[side*.65,.855,-.30],[.365,.155,.47],skinTop,side*.035);
- softPart(g,[side*.65,.966,-.34],[.285,.025,.34],skinTop,side*.02);
- [-.235,-.085,.075,.22].forEach((off,i)=>makeFinger(g,side*.65+off,-.48,[.47,.57,.54,.43][i],i===1?.067:.061));
- softPart(g,[side*.65+side*.34,.84,-.18],[.105,.095,.205],skinBase,side*.55);
- softPart(g,[side*.65+side*.40,.84,-.36],[.083,.078,.19],skinTop,side*.72);
- softPart(g,[side*.65+side*.42,.915,-.48],[.047,.012,.073],nailMat,side*.72);
- for(let k=0;k<2;k++){const crease=new THREE.Mesh(new THREE.TorusGeometry(.235-k*.018,.006,5,32,Math.PI),skinShadow);crease.position.set(side*.65,.965,.02+k*.045);crease.rotation.x=Math.PI/2;crease.rotation.z=Math.PI;g.add(crease)}
- arms.push({side,x:side*.65,zMin:-.35,zMax:2.7});
+ const elbow=[side*.77,.76,2.12],wrist=[side*.67,.86,.03];
+ limb(g,[side*.80,.69,3.05],elbow,.43,.34,sleeveMat);
+ part(g,[side*.78,.70,2.16],[.37,.285,.19],cuffMat);
+ part(g,[side*.78,.70,2.08],[.355,.275,.105],sleeveMat);
+ limb(g,wrist,elbow,.225,.315,skinBase);
+ part(g,[side*.72,.89,1.28],[.255,.105,.83],skinTop,side*.025);
+ part(g,[side*.67,.875,-.19],[.255,.12,.30],skinBase,side*.025);
+ part(g,[side*.67,.89,-.43],[.355,.145,.40],skinTop,side*.025);
+ const offsets=[-.235,-.085,.085,.235],lengths=[.47,.57,.55,.44],angles=[-.10,-.035,.035,.11];
+ offsets.forEach((off,i)=>finger(g,side*.67+off,-.62,lengths[i],i===1?.067:.061,angles[i]));
+ part(g,[side*.67-side*.27,.86,-.24],[.115,.105,.20],skinBase,-side*.42);
+ part(g,[side*.67-side*.34,.87,-.40],[.09,.082,.18],skinTop,-side*.65);
+ part(g,[side*.67-side*.35,.925,-.49],[.052,.012,.075],nailMat,-side*.65);
+ for(let k=0;k<2;k++){const crease=new THREE.Mesh(new THREE.TorusGeometry(.22-k*.018,.005,5,32,Math.PI),skinShade);crease.position.set(side*.67,.965,.015+k*.045);crease.rotation.x=Math.PI/2;crease.rotation.z=Math.PI;g.add(crease)}
+ arms.push({side,x:side*.67,zMin:-.35,zMax:2.7});
 }
 function mosquito(){
  const g=new THREE.Group();const body=mat(0x242c28,.48),wingmat=new THREE.MeshStandardMaterial({color:0xc6ded2,transparent:true,opacity:.62,roughness:.25,side:THREE.DoubleSide});
