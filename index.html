@@ -81,18 +81,48 @@ function handShape(side){
  const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xdca184,roughness:.68}));mesh.position.set(side*.73,.60,-.47);mesh.scale.x=side;mesh.castShadow=true;mesh.receiveShadow=true;return mesh;
 }
 const arms=[];
-for(const side of [-1,1]){
- const g=new THREE.Group();scene.add(g);makeArmSurface(g,side);
- const palm=handShape(side);g.add(palm);
- // Palm mound and thenar eminence, softly blended into the silhouette.
- const mound=new THREE.Mesh(new THREE.SphereGeometry(1,32,24),skinLight);mound.position.set(side*.73,.68,-.58);mound.scale.set(.22,.055,.29);mound.castShadow=true;g.add(mound);
- const thumbPad=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),skin);thumbPad.position.set(side*.73-side*.20,.66,-.76);thumbPad.scale.set(.105,.045,.18);thumbPad.rotation.y=side*.5;g.add(thumbPad);
- // Subtle nails sit at the ends of the four fingers, not floating beside them.
- for(let i=0;i<4;i++){const x=side*.73+side*[-.17,-.055,.07,.19][i];const z=-1.30+[-.03,-.10,-.12,-.02][i];const nail=new THREE.Mesh(new THREE.SphereGeometry(1,20,12),mat(0xe8c5b5,.43));nail.position.set(x,.69,z);nail.scale.set(.042,.012,.075);nail.castShadow=true;g.add(nail)}
- // Fine wrist tendons and natural creases catch the warm key light.
- for(let i=0;i<3;i++){const crease=new THREE.Mesh(new THREE.TorusGeometry(.18-i*.018,.004,5,32,Math.PI),skinShadow);crease.position.set(side*.73,.635,-.32+i*.055);crease.rotation.x=Math.PI/2;crease.rotation.z=Math.PI;g.add(crease)}
- arms.push({side,x:side*.73,zMin:-.55,zMax:2.8});
+function sphere(parent,pos,scale,material,rotZ=0){const m=new THREE.Mesh(new THREE.SphereGeometry(1,32,24),material);m.position.set(...pos);m.scale.set(...scale);m.rotation.z=rotZ;m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
+function capsule(parent,a,b,rA,rB,material){const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),d=B.clone().sub(A);const m=new THREE.Mesh(new THREE.CylinderGeometry(rB,rA,d.length(),20,1),material);m.position.copy(A).add(B).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());m.castShadow=true;m.receiveShadow=true;parent.add(m);sphere(parent,a,[rA,rA,rA],material);sphere(parent,b,[rB,rB,rB],material);return m}
+function buildHand(parent,side){
+ // Palm is a broad, tapered mass; fingers emerge from its leading edge and overlap at the knuckles.
+ sphere(parent,[side*.73,.60,-.66],[.255,.105,.34],skinLight);
+ sphere(parent,[side*.73-side*.19,.585,-.72],[.12,.09,.20],skin);
+ const offsets=[-.17,-.055,.065,.18],lengths=[.57,.68,.64,.52],widths=[.061,.068,.064,.057];
+ for(let i=0;i<4;i++){
+  const x=side*.73+side*offsets[i],len=lengths[i],w=widths[i],z0=-.82;
+  capsule(parent,[x,.60,z0],[x+side*offsets[i]*.12,.60,z0-len*.53],w,w*.91,skinLight);
+  capsule(parent,[x+side*offsets[i]*.12,.60,z0-len*.53],[x+side*offsets[i]*.16,.595,z0-len],w*.91,w*.73,skinLight);
+  sphere(parent,[x+side*offsets[i]*.16,.602,z0-len],[w*.72,.025,.085],mat(0xe8c5b5,.45));
+ }
+ // Thumb angles outward from the palm, with two visible phalanges.
+ capsule(parent,[side*.73-side*.20,.59,-.60],[side*.73-side*.37,.585,-.82],.105,.082,skin);
+ capsule(parent,[side*.73-side*.37,.585,-.82],[side*.73-side*.40,.58,-1.02],.082,.058,skinLight);
+ sphere(parent,[side*.73-side*.40,.60,-1.02],[.058,.025,.075],mat(0xe8c5b5,.45));
+ // Natural wrist transition and subtle tendon lines.
+ for(let i=0;i<2;i++){const line=new THREE.Mesh(new THREE.TorusGeometry(.17-i*.025,.004,5,32,Math.PI),skinShadow);line.position.set(side*.73,.615,-.29+i*.055);line.rotation.x=Math.PI/2;line.rotation.z=Math.PI;parent.add(line)}
 }
+function buildArm(parent,side){
+ const g=new THREE.Group();parent.add(g);
+ // Continuous elliptical arm loft with a broad upper forearm tapering into the wrist.
+ const sections=[[3.65,.53,.37,.66],[3.12,.48,.34,.67],[2.55,.42,.30,.68],[1.95,.365,.26,.69],[1.35,.315,.22,.70],[.78,.275,.185,.71],[.22,.24,.16,.72],[-.30,.225,.145,.73]];
+ const verts=[],idx=[],N=40;
+ sections.forEach(([z,rx,ry,cx])=>{for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;verts.push(side*cx+Math.cos(a)*rx,.48+Math.sin(a)*ry,z)}});
+ for(let j=0;j<sections.length-1;j++)for(let i=0;i<N;i++){const a=j*(N+1)+i,b=a+N+1;idx.push(a,a+1,b,a+1,b+1,b)}
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));geo.setIndex(idx);geo.computeVertexNormals();
+ const arm=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xd49a7d,roughness:.74,side:THREE.DoubleSide}));arm.castShadow=true;arm.receiveShadow=true;g.add(arm);
+ // Sleeve and cuff are broad cloth forms, not narrow tubes.
+ const sleeve=new THREE.Mesh(new THREE.CylinderGeometry(.53,.58,.76,48,1,true),shirt);sleeve.rotation.x=Math.PI/2;sleeve.position.set(side*.66,.48,3.35);sleeve.scale.set(1,.78,1);sleeve.castShadow=true;g.add(sleeve);
+ const cuffMesh=new THREE.Mesh(new THREE.CylinderGeometry(.44,.48,.17,48,1,true),cuff);cuffMesh.rotation.x=Math.PI/2;cuffMesh.position.set(side*.66,.48,2.96);cuffMesh.scale.set(1,.78,1);g.add(cuffMesh);
+ buildHand(g,side);
+ return g;
+}
+// Left arm rests on the tabletop. The right arm is a real articulated striking arm.
+const leftArm=buildArm(scene,-1);
+const strikerPivot=new THREE.Group();strikerPivot.position.set(.73,.48,2.65);scene.add(strikerPivot);
+const strikerOffset=new THREE.Group();strikerOffset.position.set(-.73,-.48,-2.65);strikerPivot.add(strikerOffset);
+const rightArm=buildArm(strikerOffset,1);
+arms.push({side:-1,x:-.73,zMin:-.4,zMax:2.8},{side:1,x:.73,zMin:-.4,zMax:2.8});
+let swing={active:false,phase:0,duration:.34,baseY:0,targetYaw:0,target:null,hitDone:false};
 function bugMesh(){
  const g=new THREE.Group(),body=mat(0x202823,.38),legs=mat(0x303a32,.5);
  const sphere=(p,sc,m)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(1,16,12),m);o.position.set(...p);o.scale.set(...sc);g.add(o);return o};
@@ -112,11 +142,34 @@ function removeBug(b){scene.remove(b);const i=bugs.indexOf(b);if(i>=0)bugs.splic
 function updateHUD(){scoreEl.textContent=String(score).padStart(2,'0');bitesEl.innerHTML=bites+' <small>/ 5</small>';timeEl.textContent=Math.ceil(time)}
 function gameOver(won){running=false;bar.classList.remove('active');$('#intro').textContent=won?'¡Sobreviviste! Por ahora, la casa es tuya.':'Te hicieron un colador. La próxima vez, reaccioná más rápido.';$('#start').textContent='VOLVER A INTENTAR';$('.eyebrow').textContent=won?'VICTORIA':'FIN DE LA PARTIDA';$('.bigmosq').textContent=won?'🏆':'🦟';$('h1').innerHTML=won?'BRAZOS<br><span>LIBRES.</span>':'TE<br><span>PICARON.</span>';$('.instructions').innerHTML='<div class="instruction"><b>ELIMINADOS</b>'+score+' mosquitos</div><div class="instruction"><b>PICADURAS</b>'+bites+' de 5</div>';$('#overlay').classList.remove('hidden')}
 function startGame(){bugs.slice().forEach(removeBug);score=0;bites=0;time=60;spawn=.65;running=true;updateHUD();$('#overlay').classList.add('hidden');$('.eyebrow').textContent='UN JUEGO DE REFLEJOS';$('.bigmosq').textContent='🦟';$('h1').innerHTML='MOSQUITO<br><span>ZAP.</span>';$('.instructions').innerHTML='<div class="instruction"><b>01 — DETECTÁ</b>Seguí el zumbido. Mirá dónde aterriza.</div><div class="instruction"><b>02 — REACCIONÁ</b>Apuntá y hacé click antes de que pique.</div>';$('#start').textContent='EMPEZAR A CAZAR'}
-function slap(){if(!running)return;let chosen=null,best=.16;for(const b of bugs){if(b.userData.state!=='land')continue;const p=b.position.clone().project(camera),d=Math.hypot(p.x-pointer.x,p.y-pointer.y);if(d<best){best=d;chosen=b}}if(chosen){removeBug(chosen);score++;notify('¡ZAP! +1');beep(170,.12,'triangle',.07);beep(80,.09,'sawtooth',.025)}else{notify('¡PLOP! AL AIRE');beep(140,.06,'triangle',.02)}updateHUD()}
+function slap(){
+ if(!running||swing.active)return;
+ raycaster.setFromCamera(pointer,camera);
+ const plane=new THREE.Plane(new THREE.Vector3(0,1,0),-.79);
+ const aim=new THREE.Vector3();raycaster.ray.intersectPlane(plane,aim);
+ let chosen=null,best=.19;
+ for(const b of bugs){if(b.userData.state!=='land')continue;const p=b.position.clone().project(camera),d=Math.hypot(p.x-pointer.x,p.y-pointer.y);if(d<best){best=d;chosen=b}}
+ if(chosen)aim.copy(chosen.position);
+ // Rotate the complete right arm from its elbow so its palm travels toward the clicked point.
+ const dx=aim.x-strikerPivot.position.x,dz=aim.z-strikerPivot.position.z;
+ swing={active:true,phase:0,duration:.34,targetYaw:Math.atan2(-dx,-dz),target:chosen,hitDone:false};
+ beep(260,.045,'triangle',.025);
+}
 renderer.domElement.addEventListener('pointermove',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(pointer,camera);raycaster.ray.intersectPlane(targetPlane,hitPoint)});
 renderer.domElement.addEventListener('pointerdown',e=>{if(e.button===0)slap()});addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();slap()}});
 $('#start').addEventListener('click',startGame);$('#sound').addEventListener('click',()=>{soundOn=!soundOn;$('#sound').textContent='♫ SONIDO: '+(soundOn?'ON':'OFF');if(soundOn)beep(520)});
 function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000||0,.04);last=now;const t=now*.001;
+ if(swing.active){
+  swing.phase+=dt;const p=Math.min(1,swing.phase/swing.duration);
+  // Wind up, strike down, then recoil to the relaxed resting pose.
+  const yawEase=p<.58?THREE.MathUtils.smoothstep(p,0,.58):THREE.MathUtils.lerp(swing.targetYaw,0,THREE.MathUtils.smoothstep(p,.58,1));
+  strikerPivot.rotation.y=yawEase;
+  const lift=p<.32?THREE.MathUtils.smoothstep(p,0,.32)*.34:p<.58?THREE.MathUtils.lerp(.34,-.12,THREE.MathUtils.smoothstep(p,.32,.58)):THREE.MathUtils.lerp(-.12,0,THREE.MathUtils.smoothstep(p,.58,1));
+  strikerPivot.rotation.x=lift;
+  if(p>.48&&!swing.hitDone){swing.hitDone=true;if(swing.target&&bugs.includes(swing.target)){removeBug(swing.target);score++;updateHUD();notify('¡ZAP! +1');beep(135,.12,'triangle',.07);beep(70,.08,'sawtooth',.025)}else{notify('¡PLOP! AL AIRE');beep(125,.06,'triangle',.02)}}
+  if(p>=1){swing.active=false;strikerPivot.rotation.set(0,0,0)}
+ }
+
  if(running){time-=dt;if(time<=0){time=0;updateHUD();gameOver(true)}spawn-=dt;if(spawn<=0){spawnBug();spawn=Math.max(.72,2.35-score*.03)+Math.random()*.65}
  let biting=false,nearest=1;for(const b of [...bugs]){const u=b.userData;u.life+=dt;u.phase+=dt*32;u.wings.forEach((w,i)=>w.rotation.z=Math.sin(u.phase+i*Math.PI)*.85);
  if(u.state==='fly'){const d=u.target.clone().sub(b.position);if(d.length()<.12){u.state='land';u.timer=0;b.position.copy(u.target);notify('¡EN TU BRAZO!')}else{b.position.add(d.normalize().multiplyScalar(dt*2.5));b.position.y+=Math.sin(t*12+u.life)*dt*.65}b.lookAt(u.target.x,b.position.y,u.target.z)}
