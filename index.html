@@ -22,7 +22,44 @@ body{background:radial-gradient(ellipse at 50% 35%,#31443a 0%,#17251f 55%,#0d151
 #toast{position:fixed;left:50%;top:22%;transform:translate(-50%,-10px);opacity:0;transition:.2s;background:#d7ff69;color:#152016;border-radius:99px;padding:9px 17px;font:800 11px 'DM Mono',monospace;letter-spacing:.08em;pointer-events:none;z-index:4}#toast.show{opacity:1;transform:translate(-50%,0)}
 #bitebar{position:fixed;left:50%;bottom:clamp(68px,12vh,110px);transform:translateX(-50%);width:min(230px,55vw);height:5px;border-radius:9px;background:#ffffff25;overflow:hidden;opacity:0;transition:opacity .2s}#bitebar.active{opacity:1}#bitefill{height:100%;width:100%;background:#ff745f;transform-origin:left}
 @media(max-width:560px){.stats{gap:5px}.stat{min-width:65px;padding:8px 9px}.stat strong{font-size:19px}.brand .sub{font-size:8px}.logo{width:36px;height:36px}.hint{font-size:10px;padding:9px 11px}.sound{padding:9px}}
-</style>
+
+/* PREMIUM NIGHT-SHIFT ART DIRECTION */
+:root{--lime:#d6f27a;--ink:#0b100e;--muted:#a2ada4}
+body{background:#0b100e}
+#game:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#080c0bc9 0%,transparent 23%,transparent 70%,#080c0bd9 100%);mix-blend-mode:multiply}
+.hud{padding:clamp(20px,3.5vw,46px);z-index:3}
+.top{align-items:center}
+.brand{gap:15px}
+.logo{width:48px;height:48px;border-radius:15px;border:1px solid #d6f27a55;background:linear-gradient(145deg,#d6f27a24,#ffffff05);box-shadow:0 0 32px #d6f27a16,inset 0 1px #ffffff25;font-size:25px}
+.wordmark{font-size:20px;letter-spacing:.18em;text-shadow:0 2px 18px #000}
+.sub{font-size:9px;letter-spacing:.23em;color:#a9b5a9}
+.stats{gap:10px}
+.stat{min-width:104px;padding:13px 16px;border-radius:4px;border:1px solid #dcebd51f;background:linear-gradient(145deg,#101a16df,#0b110fe8);box-shadow:0 12px 35px #0005,inset 0 1px #ffffff0b}
+.stat label{font-size:9px;letter-spacing:.2em;color:#9ca99e}
+.stat strong{font:700 29px 'DM Mono',monospace;letter-spacing:-.06em;color:#f2f5e9}
+.stat strong small{font:10px 'DM Mono';color:#a2ada4}
+.bottom{align-items:center}
+.hint{border-radius:4px;border:1px solid #dcebd51f;background:#0b120fe8;padding:13px 17px;box-shadow:0 10px 30px #0005;font:10px 'DM Mono';letter-spacing:.06em;color:#d4dfd4}
+.hint b{color:var(--lime)}
+.sound{border-radius:4px;border:1px solid #d6f27a55;background:#101a16e8;padding:13px 17px;color:#d6f27a;letter-spacing:.1em;transition:.2s}
+.sound:hover{background:#d6f27a;color:#111a13}
+.overlay{background:radial-gradient(ellipse at 50% 44%,#17241edb,#060a08f2);backdrop-filter:blur(16px)}
+.panel{border-radius:3px;border:1px solid #d6f27a50;background:linear-gradient(145deg,#1c2a22f7,#0b120ff7);box-shadow:0 40px 120px #000c,inset 0 1px #ffffff12;position:relative}
+.panel:before,.panel:after{content:"";position:absolute;width:22px;height:22px;border-color:#d6f27a;opacity:.75}
+.panel:before{left:10px;top:10px;border-left:1px solid;border-top:1px solid}
+.panel:after{right:10px;bottom:10px;border-right:1px solid;border-bottom:1px solid}
+.eyebrow{letter-spacing:.3em;font-size:9px}
+.bigmosq{font-size:56px;filter:drop-shadow(0 8px 20px #d6f27a22)}
+h1{font-size:clamp(50px,10vw,74px);letter-spacing:-.045em;text-shadow:0 8px 40px #0008}
+.desc{font-size:13px;color:#c1cdc2}
+.instruction{border-radius:3px;border:1px solid #ffffff16;background:#ffffff08;font-size:10px;letter-spacing:.02em}
+.instruction b{font:10px 'DM Mono';letter-spacing:.12em;color:var(--lime)}
+.primary{border-radius:3px;background:linear-gradient(110deg,#d6f27a,#b9dc5b);box-shadow:0 4px 0 #718d36,0 12px 32px #b9dc5b22;letter-spacing:.15em}
+.primary:hover{box-shadow:0 6px 0 #718d36,0 16px 38px #b9dc5b33}
+#toast{border-radius:3px;letter-spacing:.16em;box-shadow:0 8px 30px #0008}
+#bitebar{height:4px;background:#ffffff20}
+@media(max-width:560px){.stats{gap:5px}.stat{min-width:64px;padding:9px 8px}.stat strong{font-size:20px}.brand{gap:9px}.logo{width:39px;height:39px}.wordmark{font-size:16px}.bottom{align-items:flex-end}}
+\n</style>
 </head>
 <body>
 <div id="game"></div>
@@ -39,12 +76,12 @@ body{background:radial-gradient(ellipse at 50% 35%,#31443a 0%,#17251f 55%,#0d151
 <script type="module">
 import * as THREE from 'three';
 const mount=document.querySelector('#game');
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x26382f);scene.fog=new THREE.Fog(0x26382f,10,22);
-const camera=new THREE.PerspectiveCamera(39,innerWidth/innerHeight,.1,60);camera.position.set(0,7.8,10.8);camera.lookAt(0,.55,.1);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;mount.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xdcebdc,0x39453a,2));
-const key=new THREE.DirectionalLight(0xffe5c3,3.1);key.position.set(-3,8,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
-const fill=new THREE.DirectionalLight(0xa4d8c0,1.15);fill.position.set(4,4,-5);scene.add(fill);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x18231d);scene.fog=new THREE.Fog(0x18231d,12,26);
+const camera=new THREE.PerspectiveCamera(37,innerWidth/innerHeight,.1,60);camera.position.set(0,7.1,10.2);camera.lookAt(0,.55,.1);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;mount.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xdcebdc,0x202a23,2.25));
+const key=new THREE.DirectionalLight(0xffdfb5,3.7);key.position.set(-3,8,5);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.bias=-0.00018;key.shadow.normalBias=0.025;scene.add(key);
+const fill=new THREE.DirectionalLight(0xa4d8c0,1.5);fill.position.set(4,4,-5);scene.add(fill);
 const mat=(color,roughness=.8)=>new THREE.MeshStandardMaterial({color,roughness});
 const tableMat=mat(0x596b5d),skin=mat(0xd99d78),skinLight=mat(0xe9b18b),sleeve=mat(0x344b42),dark=mat(0x17231e),metal=mat(0x28332e,.38);
 const floor=new THREE.Mesh(new THREE.PlaneGeometry(200,200),mat(0x26382f));floor.rotation.x=-Math.PI/2;floor.position.y=-.12;floor.receiveShadow=true;scene.add(floor);
