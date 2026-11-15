@@ -2,177 +2,127 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#101a18"><title>MOSQUITO ZAP</title>
+<meta name="theme-color" content="#111714"><title>MOSQUITO ZAP</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800;900&display=swap');
-:root{color-scheme:dark;--lime:#d7ff69;--ink:#101a18;--muted:#9aa9a0}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--ink);font-family:Outfit,system-ui,sans-serif;color:#f5f7ed}
-body{background:radial-gradient(ellipse at 50% 35%,#31443a 0%,#17251f 55%,#0d1513 100%)}
-#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%;cursor:none}
-.hud{position:fixed;inset:0;pointer-events:none;padding:clamp(16px,3vw,34px);display:flex;flex-direction:column;justify-content:space-between}
-.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border:1px solid #ffffff30;border-radius:13px;background:#ffffff0d;display:grid;place-items:center;font-size:23px;box-shadow:0 8px 24px #0003}
-.wordmark{font-size:18px;font-weight:900;letter-spacing:.13em}.sub{font:10px 'DM Mono',monospace;letter-spacing:.16em;color:var(--muted);margin-top:3px}
-.stats{display:flex;gap:9px}.stat{min-width:88px;padding:10px 14px;border:1px solid #ffffff20;border-radius:13px;background:#0d1714b8;backdrop-filter:blur(12px)}.stat label{display:block;font:9px 'DM Mono',monospace;color:var(--muted);letter-spacing:.14em}.stat strong{display:block;font-size:23px;line-height:1.15;margin-top:4px;font-weight:800}.stat strong small{font-size:12px;color:var(--muted)}
-.bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}.hint{padding:11px 15px;border:1px solid #ffffff20;background:#0d1714b8;backdrop-filter:blur(12px);border-radius:12px;font-size:12px;color:#d5ded6}.hint b{color:var(--lime)}.sound{pointer-events:auto;border:1px solid #ffffff25;background:#0d1714c9;color:white;border-radius:12px;padding:11px 13px;font:11px 'DM Mono',monospace;cursor:pointer}
-.overlay{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:#08110dcc;backdrop-filter:blur(10px);z-index:5;transition:opacity .25s}.overlay.hidden{opacity:0;pointer-events:none}.panel{width:min(440px,100%);padding:clamp(24px,5vw,42px);border:1px solid #ffffff25;border-radius:24px;background:linear-gradient(145deg,#26382fef,#14211cf5);box-shadow:0 30px 100px #0008;text-align:center}
-.eyebrow{font:10px 'DM Mono',monospace;letter-spacing:.24em;color:var(--lime)}h1{font-size:clamp(42px,10vw,66px);line-height:.9;letter-spacing:-.065em;margin:15px 0 12px;font-weight:900}h1 span{color:var(--lime)}.desc{max-width:310px;margin:0 auto;color:#bdc9bf;font-size:14px;line-height:1.65}.bigmosq{font-size:50px;margin:18px 0 4px;filter:drop-shadow(0 8px 12px #0006)}
-.primary{margin-top:25px;width:100%;border:0;border-radius:13px;padding:16px 20px;background:var(--lime);color:#172018;font:800 14px Outfit,sans-serif;letter-spacing:.08em;cursor:pointer;box-shadow:0 6px 0 #8eae3f;transition:transform .12s,box-shadow .12s}.primary:hover{transform:translateY(-2px);box-shadow:0 8px 0 #8eae3f}.primary:active{transform:translateY(3px);box-shadow:0 2px 0 #8eae3f}
-.instructions{display:flex;gap:10px;margin-top:18px;text-align:left}.instruction{flex:1;padding:11px;background:#ffffff09;border:1px solid #ffffff12;border-radius:11px;font-size:11px;color:#bdc9bf;line-height:1.5}.instruction b{display:block;color:white;font-size:12px;margin-bottom:3px}
-#toast{position:fixed;left:50%;top:22%;transform:translate(-50%,-10px);opacity:0;transition:.2s;background:#d7ff69;color:#152016;border-radius:99px;padding:9px 17px;font:800 11px 'DM Mono',monospace;letter-spacing:.08em;pointer-events:none;z-index:4}#toast.show{opacity:1;transform:translate(-50%,0)}
-#bitebar{position:fixed;left:50%;bottom:clamp(68px,12vh,110px);transform:translateX(-50%);width:min(230px,55vw);height:5px;border-radius:9px;background:#ffffff25;overflow:hidden;opacity:0;transition:opacity .2s}#bitebar.active{opacity:1}#bitefill{height:100%;width:100%;background:#ff745f;transform-origin:left}
-@media(max-width:560px){.stats{gap:5px}.stat{min-width:65px;padding:8px 9px}.stat strong{font-size:19px}.brand .sub{font-size:8px}.logo{width:36px;height:36px}.hint{font-size:10px;padding:9px 11px}.sound{padding:9px}}
-
-/* PREMIUM NIGHT-SHIFT ART DIRECTION */
-:root{--lime:#d6f27a;--ink:#0b100e;--muted:#a2ada4}
-body{background:#0b100e}
-#game:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#080c0bc9 0%,transparent 23%,transparent 70%,#080c0bd9 100%);mix-blend-mode:multiply}
-.hud{padding:clamp(20px,3.5vw,46px);z-index:3}
-.top{align-items:center}
-.brand{gap:15px}
-.logo{width:48px;height:48px;border-radius:15px;border:1px solid #d6f27a55;background:linear-gradient(145deg,#d6f27a24,#ffffff05);box-shadow:0 0 32px #d6f27a16,inset 0 1px #ffffff25;font-size:25px}
-.wordmark{font-size:20px;letter-spacing:.18em;text-shadow:0 2px 18px #000}
-.sub{font-size:9px;letter-spacing:.23em;color:#a9b5a9}
-.stats{gap:10px}
-.stat{min-width:104px;padding:13px 16px;border-radius:4px;border:1px solid #dcebd51f;background:linear-gradient(145deg,#101a16df,#0b110fe8);box-shadow:0 12px 35px #0005,inset 0 1px #ffffff0b}
-.stat label{font-size:9px;letter-spacing:.2em;color:#9ca99e}
-.stat strong{font:700 29px 'DM Mono',monospace;letter-spacing:-.06em;color:#f2f5e9}
-.stat strong small{font:10px 'DM Mono';color:#a2ada4}
-.bottom{align-items:center}
-.hint{border-radius:4px;border:1px solid #dcebd51f;background:#0b120fe8;padding:13px 17px;box-shadow:0 10px 30px #0005;font:10px 'DM Mono';letter-spacing:.06em;color:#d4dfd4}
-.hint b{color:var(--lime)}
-.sound{border-radius:4px;border:1px solid #d6f27a55;background:#101a16e8;padding:13px 17px;color:#d6f27a;letter-spacing:.1em;transition:.2s}
-.sound:hover{background:#d6f27a;color:#111a13}
-.overlay{background:radial-gradient(ellipse at 50% 44%,#17241edb,#060a08f2);backdrop-filter:blur(16px)}
-.panel{border-radius:3px;border:1px solid #d6f27a50;background:linear-gradient(145deg,#1c2a22f7,#0b120ff7);box-shadow:0 40px 120px #000c,inset 0 1px #ffffff12;position:relative}
-.panel:before,.panel:after{content:"";position:absolute;width:22px;height:22px;border-color:#d6f27a;opacity:.75}
-.panel:before{left:10px;top:10px;border-left:1px solid;border-top:1px solid}
-.panel:after{right:10px;bottom:10px;border-right:1px solid;border-bottom:1px solid}
-.eyebrow{letter-spacing:.3em;font-size:9px}
-.bigmosq{font-size:56px;filter:drop-shadow(0 8px 20px #d6f27a22)}
-h1{font-size:clamp(50px,10vw,74px);letter-spacing:-.045em;text-shadow:0 8px 40px #0008}
-.desc{font-size:13px;color:#c1cdc2}
-.instruction{border-radius:3px;border:1px solid #ffffff16;background:#ffffff08;font-size:10px;letter-spacing:.02em}
-.instruction b{font:10px 'DM Mono';letter-spacing:.12em;color:var(--lime)}
-.primary{border-radius:3px;background:linear-gradient(110deg,#d6f27a,#b9dc5b);box-shadow:0 4px 0 #718d36,0 12px 32px #b9dc5b22;letter-spacing:.15em}
-.primary:hover{box-shadow:0 6px 0 #718d36,0 16px 38px #b9dc5b33}
-#toast{border-radius:3px;letter-spacing:.16em;box-shadow:0 8px 30px #0008}
-#bitebar{height:4px;background:#ffffff20}
-@media(max-width:560px){.stats{gap:5px}.stat{min-width:64px;padding:9px 8px}.stat strong{font-size:20px}.brand{gap:9px}.logo{width:39px;height:39px}.wordmark{font-size:16px}.bottom{align-items:flex-end}}
-\n</style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;600;700;800;900&display=swap');
+:root{color-scheme:dark;--acid:#d9f58b;--muted:#aab5aa}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101713;color:#f4f5ed;font-family:Outfit,system-ui,sans-serif}
+#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%;cursor:crosshair}
+.hud{position:fixed;inset:0;z-index:2;pointer-events:none;padding:clamp(15px,3vw,38px);display:flex;flex-direction:column;justify-content:space-between}
+.top,.bottom{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px;text-shadow:0 2px 18px #000}
+.logo{width:43px;height:43px;border:1px solid #d9f58b55;background:#18231bcc;border-radius:12px;display:grid;place-items:center;font-size:23px;box-shadow:0 8px 30px #0007}
+.wordmark{font-size:17px;font-weight:900;letter-spacing:.17em}.sub{font:9px 'DM Mono';letter-spacing:.2em;color:#c1cbbf;margin-top:4px}
+.stats{display:flex;gap:8px}.stat{min-width:84px;padding:10px 13px;border:1px solid #e4f3df22;background:#101813d9;backdrop-filter:blur(14px);border-radius:9px;box-shadow:0 8px 30px #0004}.stat label{display:block;font:9px 'DM Mono';letter-spacing:.15em;color:var(--muted)}.stat strong{display:block;font:700 24px 'DM Mono';margin-top:4px}.stat small{font-size:11px;color:#9ba89b}
+.bottom{align-items:flex-end}.hint,.sound{border:1px solid #e4f3df25;background:#101813df;backdrop-filter:blur(12px);border-radius:8px;padding:11px 14px;box-shadow:0 8px 28px #0005}.hint{font:10px 'DM Mono';letter-spacing:.03em;color:#d6dfd3}.hint b{color:var(--acid)}.sound{pointer-events:auto;color:var(--acid);font:10px 'DM Mono';letter-spacing:.1em;cursor:pointer}
+.overlay{position:fixed;inset:0;z-index:5;display:grid;place-items:center;padding:20px;background:#080e0bd9;backdrop-filter:blur(12px);transition:opacity .25s}.overlay.hidden{opacity:0;pointer-events:none}
+.panel{width:min(430px,100%);padding:34px;border:1px solid #d9f58b55;border-radius:15px;background:linear-gradient(145deg,#243329f7,#101a14fa);box-shadow:0 35px 100px #000b;text-align:center}
+.eyebrow{font:10px 'DM Mono';letter-spacing:.25em;color:var(--acid)}h1{font-size:clamp(48px,10vw,72px);line-height:.86;letter-spacing:-.06em;margin:17px 0 14px;font-weight:900}h1 span{color:var(--acid)}.desc{font-size:13px;line-height:1.65;color:#c2cdc1;max-width:315px;margin:0 auto}.bigmosq{font-size:47px;margin:18px 0 2px;filter:drop-shadow(0 6px 20px #d9f58b33)}
+.instructions{display:flex;gap:9px;margin-top:20px;text-align:left}.instruction{flex:1;padding:11px;border:1px solid #ffffff16;background:#ffffff08;border-radius:8px;font-size:10px;line-height:1.5;color:#c4cec3}.instruction b{display:block;font:10px 'DM Mono';color:var(--acid);margin-bottom:4px}
+.primary{width:100%;margin-top:23px;border:0;border-radius:8px;padding:15px;background:var(--acid);color:#142016;font:800 12px Outfit;letter-spacing:.15em;cursor:pointer;box-shadow:0 4px 0 #8cae4b;transition:.15s}.primary:hover{transform:translateY(-2px);filter:brightness(1.06)}
+#toast{position:fixed;z-index:4;top:20%;left:50%;transform:translate(-50%,-8px);opacity:0;background:var(--acid);color:#172117;padding:9px 16px;border-radius:5px;font:800 10px 'DM Mono';letter-spacing:.12em;transition:.18s;pointer-events:none}#toast.show{opacity:1;transform:translate(-50%,0)}
+#bitebar{position:fixed;z-index:3;left:50%;bottom:clamp(67px,11vh,105px);transform:translateX(-50%);width:min(220px,52vw);height:5px;border-radius:9px;background:#fff3;overflow:hidden;opacity:0;transition:opacity .2s}#bitebar.active{opacity:1}#bitefill{height:100%;background:#ff765f;transform-origin:left}
+@media(max-width:560px){.hud{padding:13px}.logo{width:34px;height:34px;font-size:19px}.wordmark{font-size:13px}.sub{font-size:7px}.stats{gap:4px}.stat{min-width:57px;padding:7px 8px}.stat label{font-size:7px}.stat strong{font-size:17px}.hint{font-size:8px;padding:9px}.sound{font-size:8px;padding:9px}.panel{padding:25px 20px}}
+</style>
 </head>
 <body>
 <div id="game"></div>
 <div class="hud">
- <div class="top">
-  <div class="brand"><div class="logo">🦟</div><div><div class="wordmark">MOSQUITO ZAP</div><div class="sub">NO TE DEJES PICAR.</div></div></div>
-  <div class="stats"><div class="stat"><label>ELIMINADOS</label><strong id="score">00</strong></div><div class="stat"><label>PICADURAS</label><strong id="bites">0 <small>/ 5</small></strong></div><div class="stat"><label>TIEMPO</label><strong id="time">60</strong></div></div>
- </div>
+ <div class="top"><div class="brand"><div class="logo">🦟</div><div><div class="wordmark">MOSQUITO ZAP</div><div class="sub">NO TE DEJES PICAR.</div></div></div>
+ <div class="stats"><div class="stat"><label>ELIMINADOS</label><strong id="score">00</strong></div><div class="stat"><label>PICADURAS</label><strong id="bites">0 <small>/ 5</small></strong></div><div class="stat"><label>TIEMPO</label><strong id="time">60</strong></div></div></div>
  <div class="bottom"><div class="hint"><b>CLICK</b> para aplastar · <b>ESPACIO</b> golpe rápido</div><button class="sound" id="sound">♫ SONIDO: ON</button></div>
 </div>
 <div id="bitebar"><div id="bitefill"></div></div><div id="toast"></div>
-<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">UN JUEGO DE REFLEJOS</div><div class="bigmosq">🦟</div><h1>MOSQUITO<br><span>ZAP.</span></h1><p class="desc" id="intro">Estás tranquilo. Tus brazos descansan. Entonces escuchás ese zumbido insoportable… No dejes que te conviertan en un colador.</p><div class="instructions"><div class="instruction"><b>01 — DETECTÁ</b>Seguí el zumbido. Mirá dónde aterriza.</div><div class="instruction"><b>02 — REACCIONÁ</b>Apuntá y hacé click antes de que pique.</div></div><button class="primary" id="start">EMPEZAR A CAZAR</button></div></div>
+<div class="overlay" id="overlay"><div class="panel"><div class="eyebrow">UN JUEGO DE REFLEJOS</div><div class="bigmosq">🦟</div><h1>MOSQUITO<br><span>ZAP.</span></h1><p class="desc" id="intro">Estás tranquilo. Tus brazos descansan sobre la mesa. Entonces escuchás ese zumbido insoportable… No dejes que te piquen.</p><div class="instructions"><div class="instruction"><b>01 — DETECTÁ</b>Seguí el zumbido. Mirá dónde aterriza.</div><div class="instruction"><b>02 — REACCIONÁ</b>Apuntá y hacé click antes de que pique.</div></div><button class="primary" id="start">EMPEZAR A CAZAR</button></div></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
 const mount=document.querySelector('#game');
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x18231d);scene.fog=new THREE.Fog(0x18231d,12,26);
-const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,.1,60);camera.position.set(0,3.35,8.15);camera.lookAt(0,.78,-.65);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;mount.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xe6d7c4,0x241a16,1.8));
-const key=new THREE.DirectionalLight(0xffd3a1,3.1);key.position.set(-3,8,5);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.bias=-0.00018;key.shadow.normalBias=0.025;scene.add(key);
-const fill=new THREE.DirectionalLight(0x8ba99a,1.8);fill.position.set(4,4,-5);scene.add(fill);
-const mat=(color,roughness=.8)=>new THREE.MeshStandardMaterial({color,roughness});
-const tableMat=mat(0x3b3026),skin=mat(0xd99d78),skinLight=mat(0xe9b18b),sleeve=mat(0x344b42),dark=mat(0x17231e),metal=mat(0x28332e,.38);
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(200,200),mat(0x18231d));floor.rotation.x=-Math.PI/2;floor.position.y=-.12;floor.receiveShadow=true;scene.add(floor);
-const table=new THREE.Mesh(new THREE.BoxGeometry(9,.38,9),tableMat);table.position.set(0,.18,-.05);table.receiveShadow=true;table.castShadow=true;scene.add(table);
-const edge=new THREE.Mesh(new THREE.BoxGeometry(9.05,.09,9.05),mat(0x293b31));edge.position.set(0,.39,-.05);scene.add(edge);
-for(let i=0;i<9;i++){const grain=new THREE.Mesh(new THREE.BoxGeometry(8.2,.006,.012),mat(i%2?0x718171:0x465a4d));grain.position.set(0,.39,-3.8+i*.88);scene.add(grain)}
-function capsuleBetween(a,b,r1,r2,material){const d=new THREE.Vector3().subVectors(b,a);const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r2,r1,d.length(),16,1),material);mesh.position.copy(a).add(b).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);return mesh}
-function ellipsoid(parent,pos,scale,material){const m=new THREE.Mesh(new THREE.SphereGeometry(1,24,16),material);m.position.set(...pos);m.scale.set(...scale);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x202a23);scene.fog=new THREE.Fog(0x202a23,13,29);
+const camera=new THREE.PerspectiveCamera(49,innerWidth/innerHeight,.1,70);camera.position.set(0,3.05,7.5);camera.lookAt(0,.78,-.85);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;mount.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xf2e4d1,0x25251e,1.55));
+const key=new THREE.DirectionalLight(0xffd9b0,2.7);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.camera.left=-8;key.shadow.camera.right=8;key.shadow.camera.top=8;key.shadow.camera.bottom=-8;key.shadow.bias=-.0002;scene.add(key);
+const fill=new THREE.DirectionalLight(0x9db7a4,1.15);fill.position.set(4,4,-5);scene.add(fill);
+const mat=(c,r=.8)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
+const wood=mat(0x604b38),edgeMat=mat(0x302c25),floorMat=mat(0x202a23),skin=mat(0xc98d70,.72),skinLight=mat(0xdca184,.7),skinShadow=mat(0xa96f5b,.86),shirt=mat(0x293d35,.92),cuff=mat(0x52675a,.88);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(200,200),floorMat);floor.rotation.x=-Math.PI/2;floor.position.y=-.35;floor.receiveShadow=true;scene.add(floor);
+const table=new THREE.Mesh(new THREE.BoxGeometry(10,.32,10),wood);table.position.set(0,.12,-.15);table.receiveShadow=true;table.castShadow=true;scene.add(table);
+const frontEdge=new THREE.Mesh(new THREE.BoxGeometry(10,.12,.12),edgeMat);frontEdge.position.set(0,-.08,4.88);scene.add(frontEdge);
+// A quiet, softly lit room beyond the table gives the POV a real horizon.
+const wall=new THREE.Mesh(new THREE.PlaneGeometry(30,12),mat(0x303b31));wall.position.set(0,5,-5.3);wall.receiveShadow=true;scene.add(wall);
+const lamp=new THREE.PointLight(0xffd9a8,24,13,2);lamp.position.set(-3.4,4.2,-2.7);scene.add(lamp);
+function makeArmSurface(parent,side){
+ // Continuous elliptical loft: shoulder/sleeve into forearm and a narrow wrist.
+ const sections=[
+  [3.65,.54,.40,.66],[3.1,.49,.36,.67],[2.45,.42,.31,.68],[1.8,.355,.255,.69],[1.2,.30,.205,.70],[.55,.265,.17,.71],[-.05,.235,.145,.72],[-.48,.215,.13,.73]
+ ];
+ const verts=[],uv=[],idx=[],N=32;
+ sections.forEach(([z,rx,ry,cx],j)=>{for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;verts.push(side*cx+Math.cos(a)*rx,.48+Math.sin(a)*ry,z);uv.push(i/N,j/(sections.length-1))}});
+ for(let j=0;j<sections.length-1;j++)for(let i=0;i<N;i++){const a=j*(N+1)+i,b=a+N+1;idx.push(a,b,a+1,b,b+1,a+1)}
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();
+ // The camera sees the upper half of this closed organic tube.
+ const arm=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xd49a7d,roughness:.76,side:THREE.DoubleSide}));arm.castShadow=true;arm.receiveShadow=true;parent.add(arm);
+ // Sleeve cuff at the elbow end, deliberately wider than the wrist.
+ const sleeveGeo=new THREE.CylinderGeometry(.49,.55,.66,48,1,true);const sleeveMesh=new THREE.Mesh(sleeveGeo,shirt);sleeveMesh.rotation.x=Math.PI/2;sleeveMesh.position.set(side*.66,.48,3.34);sleeveMesh.scale.set(1,.78,1);sleeveMesh.castShadow=true;parent.add(sleeveMesh);
+ const cuffMesh=new THREE.Mesh(new THREE.CylinderGeometry(.39,.45,.15,48,1,true),cuff);cuffMesh.rotation.x=Math.PI/2;cuffMesh.position.set(side*.66,.48,2.98);cuffMesh.scale.set(1,.78,1);parent.add(cuffMesh);
+}
+function handShape(side){
+ // One continuous silhouette, with individual finger valleys and a natural thumb root.
+ const s=new THREE.Shape();
+ s.moveTo(-.205,.04);s.quadraticCurveTo(-.29,-.12,-.29,-.39);s.quadraticCurveTo(-.29,-.52,-.22,-.54);
+ s.quadraticCurveTo(-.15,-.55,-.14,-.43);s.lineTo(-.13,-.82);s.quadraticCurveTo(-.12,-.94,-.045,-.94);s.quadraticCurveTo(.025,-.94,.025,-.82);
+ s.lineTo(.045,-.99);s.quadraticCurveTo(.12,-1.06,.18,-.98);s.lineTo(.19,-.78);
+ s.lineTo(.22,-.91);s.quadraticCurveTo(.29,-.98,.34,-.89);s.lineTo(.32,-.64);
+ s.quadraticCurveTo(.40,-.77,.46,-.68);s.quadraticCurveTo(.51,-.60,.44,-.43);
+ s.lineTo(.31,-.10);s.quadraticCurveTo(.28,.06,.17,.12);s.quadraticCurveTo(0,.20,-.15,.12);s.quadraticCurveTo(-.22,.10,-.205,.04);
+ const geo=new THREE.ExtrudeGeometry(s,{depth:.105,bevelEnabled:true,bevelSegments:4,steps:1,bevelSize:.035,bevelThickness:.035,curveSegments:12});
+ geo.rotateX(Math.PI/2);
+ const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xdca184,roughness:.68}));mesh.position.set(side*.73,.60,-.47);mesh.scale.x=side;mesh.castShadow=true;mesh.receiveShadow=true;return mesh;
+}
 const arms=[];
-const skinBase=new THREE.MeshStandardMaterial({color:0xc98b6b,roughness:.78});
-const skinTop=new THREE.MeshStandardMaterial({color:0xe0a483,roughness:.7});
-const skinShade=new THREE.MeshStandardMaterial({color:0xb97860,roughness:.85});
-const nailMat=new THREE.MeshStandardMaterial({color:0xe9c6b7,roughness:.4});
-const sleeveMat=new THREE.MeshStandardMaterial({color:0x293d35,roughness:.94});
-const cuffMat=new THREE.MeshStandardMaterial({color:0x53685b,roughness:.9});
-function part(parent,pos,scale,material,rotZ=0){
- const m=new THREE.Mesh(new THREE.SphereGeometry(1,40,28),material);
- m.position.set(...pos);m.scale.set(...scale);m.rotation.z=rotZ;m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
-}
-function limb(parent,a,b,rA,rB,material){
- const start=new THREE.Vector3(...a),end=new THREE.Vector3(...b),dir=end.clone().sub(start);
- const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rB,rA,dir.length(),32,1),material);
- mesh.position.copy(start).add(end).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
- mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);
- part(parent,a,[rA,rA,rA],material);part(parent,b,[rB,rB,rB],material);return mesh;
-}
-function finger(parent,x,z,len,width,angle=0){
- const y=.91,m=new THREE.Mesh(new THREE.CapsuleGeometry(width,len,8,20),skinTop);
- m.position.set(x,y,z-len*.34);m.rotation.x=Math.PI/2;m.rotation.z=angle;m.castShadow=true;m.receiveShadow=true;parent.add(m);
- part(parent,[x,y+.043,z-len*.67],[width*.58,.012,width*.24],nailMat,angle);
- for(let k=0;k<2;k++){const line=new THREE.Mesh(new THREE.TorusGeometry(width*.62,.0035,5,16),skinShade);line.position.set(x,y+.044,z-len*(.20+k*.20));line.rotation.x=Math.PI/2;line.scale.set(1,.48,1);parent.add(line)}
-}
 for(const side of [-1,1]){
- const g=new THREE.Group();scene.add(g);
- const elbow=[side*.77,.76,2.12],wrist=[side*.67,.86,.03];
- limb(g,[side*.80,.69,3.05],elbow,.43,.34,sleeveMat);
- part(g,[side*.78,.70,2.16],[.37,.285,.19],cuffMat);
- part(g,[side*.78,.70,2.08],[.355,.275,.105],sleeveMat);
- limb(g,wrist,elbow,.225,.315,skinBase);
- part(g,[side*.72,.89,1.28],[.255,.105,.83],skinTop,side*.025);
- part(g,[side*.67,.875,-.19],[.255,.12,.30],skinBase,side*.025);
- part(g,[side*.67,.89,-.43],[.355,.145,.40],skinTop,side*.025);
- const offsets=[-.235,-.085,.085,.235],lengths=[.47,.57,.55,.44],angles=[-.10,-.035,.035,.11];
- offsets.forEach((off,i)=>finger(g,side*.67+off,-.62,lengths[i],i===1?.067:.061,angles[i]));
- part(g,[side*.67-side*.27,.86,-.24],[.115,.105,.20],skinBase,-side*.42);
- part(g,[side*.67-side*.34,.87,-.40],[.09,.082,.18],skinTop,-side*.65);
- part(g,[side*.67-side*.35,.925,-.49],[.052,.012,.075],nailMat,-side*.65);
- for(let k=0;k<2;k++){const crease=new THREE.Mesh(new THREE.TorusGeometry(.22-k*.018,.005,5,32,Math.PI),skinShade);crease.position.set(side*.67,.965,.015+k*.045);crease.rotation.x=Math.PI/2;crease.rotation.z=Math.PI;g.add(crease)}
- arms.push({side,x:side*.67,zMin:-.35,zMax:2.7});
+ const g=new THREE.Group();scene.add(g);makeArmSurface(g,side);
+ const palm=handShape(side);g.add(palm);
+ // Palm mound and thenar eminence, softly blended into the silhouette.
+ const mound=new THREE.Mesh(new THREE.SphereGeometry(1,32,24),skinLight);mound.position.set(side*.73,.68,-.58);mound.scale.set(.22,.055,.29);mound.castShadow=true;g.add(mound);
+ const thumbPad=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),skin);thumbPad.position.set(side*.73-side*.20,.66,-.76);thumbPad.scale.set(.105,.045,.18);thumbPad.rotation.y=side*.5;g.add(thumbPad);
+ // Subtle nails sit at the ends of the four fingers, not floating beside them.
+ for(let i=0;i<4;i++){const x=side*.73+side*[-.17,-.055,.07,.19][i];const z=-1.30+[-.03,-.10,-.12,-.02][i];const nail=new THREE.Mesh(new THREE.SphereGeometry(1,20,12),mat(0xe8c5b5,.43));nail.position.set(x,.69,z);nail.scale.set(.042,.012,.075);nail.castShadow=true;g.add(nail)}
+ // Fine wrist tendons and natural creases catch the warm key light.
+ for(let i=0;i<3;i++){const crease=new THREE.Mesh(new THREE.TorusGeometry(.18-i*.018,.004,5,32,Math.PI),skinShadow);crease.position.set(side*.73,.635,-.32+i*.055);crease.rotation.x=Math.PI/2;crease.rotation.z=Math.PI;g.add(crease)}
+ arms.push({side,x:side*.73,zMin:-.55,zMax:2.8});
 }
-function mosquito(){
- const g=new THREE.Group();const body=mat(0x242c28,.48),wingmat=new THREE.MeshStandardMaterial({color:0xc6ded2,transparent:true,opacity:.62,roughness:.25,side:THREE.DoubleSide});
- ellipsoid(g,[0,0,0],[.045,.055,.16],body);
- ellipsoid(g,[0,.012,-.15],[.052,.05,.06],body);
- ellipsoid(g,[0,.018,-.21],[.035,.035,.04],mat(0x111915,.35));
- const prob=new THREE.Mesh(new THREE.CylinderGeometry(.004,.009,.18,6),body);prob.rotation.x=Math.PI/2;prob.position.set(0,-.005,-.32);g.add(prob);
- for(let i=0;i<3;i++){for(const s of [-1,1]){const leg=capsuleLocal(new THREE.Vector3(s*.025,-.025,(i-1)*.09),new THREE.Vector3(s*(.13+i*.025),-.12,(i-1)*.11+.05),.006,body);g.add(leg)}}
- const wings=[];for(const s of [-1,1]){const w=new THREE.Mesh(new THREE.PlaneGeometry(.12,.27),wingmat);w.position.set(s*.075,.07,-.015);w.rotation.z=s*.45;g.add(w);wings.push(w)}
- g.userData.wings=wings;g.userData.phase=Math.random()*6;return g;
+function bugMesh(){
+ const g=new THREE.Group(),body=mat(0x202823,.38),legs=mat(0x303a32,.5);
+ const sphere=(p,sc,m)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(1,16,12),m);o.position.set(...p);o.scale.set(...sc);g.add(o);return o};
+ sphere([0,0,0],[.043,.045,.13],body);sphere([0,.005,-.13],[.05,.045,.055],body);sphere([0,.012,-.19],[.03,.03,.035],mat(0x101713,.25));
+ const prob=new THREE.Mesh(new THREE.CylinderGeometry(.003,.008,.17,6),body);prob.rotation.x=Math.PI/2;prob.position.set(0,-.006,-.29);g.add(prob);
+ for(let i=0;i<3;i++)for(const s of [-1,1]){const a=new THREE.Vector3(s*.025,-.025,(i-1)*.075),b=new THREE.Vector3(s*(.13+i*.025),-.12,(i-1)*.075+.05),d=b.clone().sub(a);const leg=new THREE.Mesh(new THREE.CylinderGeometry(.003,.005,d.length(),5),legs);leg.position.copy(a).add(b).multiplyScalar(.5);leg.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());g.add(leg)}
+ const wings=[];for(const s of [-1,1]){const w=new THREE.Mesh(new THREE.PlaneGeometry(.105,.24),new THREE.MeshStandardMaterial({color:0xc9d9cf,transparent:true,opacity:.55,side:THREE.DoubleSide,roughness:.3}));w.position.set(s*.065,.055,-.015);w.rotation.z=s*.48;g.add(w);wings.push(w)}
+ g.userData.wings=wings;return g;
 }
-function capsuleLocal(a,b,r,material){const d=new THREE.Vector3().subVectors(b,a);const m=new THREE.Mesh(new THREE.CylinderGeometry(r*.55,r,d.length(),6),material);m.position.copy(a).add(b).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());return m}
-const bugs=[];let score=0,bites=0,time=60,running=false,last=0,spawn=0,soundOn=true,audio=null,slapUntil=0;
-const scoreEl=document.querySelector('#score'),bitesEl=document.querySelector('#bites'),timeEl=document.querySelector('#time'),bar=document.querySelector('#bitebar'),bitefill=document.querySelector('#bitefill'),toast=document.querySelector('#toast');
-const pointer=new THREE.Vector2(),raycaster=new THREE.Raycaster(),targetPlane=new THREE.Plane(new THREE.Vector3(0,1,0),-.92),hitPoint=new THREE.Vector3();
-const hand=new THREE.Group();scene.add(hand);const palm=ellipsoid(hand,[0,0,0],[.25,.095,.3],skinLight);palm.rotation.x=-.08;
-for(let i=0;i<4;i++){const f=ellipsoid(hand,[(i-1.5)*.105,.005,-.31],[.066,.07,.22],skinLight);f.rotation.x=-.12}
-const thumb=ellipsoid(hand,[-.27,0,-.08],[.08,.075,.19],skinLight);thumb.rotation.y=-.7;hand.visible=false;
-function beep(freq=420,duration=.07,type='sine',volume=.045){if(!soundOn)return;try{audio??=new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),v=audio.createGain();o.type=type;o.frequency.value=freq;v.gain.setValueAtTime(volume,audio.currentTime);v.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(v);v.connect(audio.destination);o.start();o.stop(audio.currentTime+duration)}catch{}}
-function notify(t){toast.textContent=t;toast.classList.add('show');clearTimeout(notify.t);notify.t=setTimeout(()=>toast.classList.remove('show'),850)}
-function spawnBug(){if(bugs.length>=5)return;const b=mosquito();const arm=arms[Math.floor(Math.random()*2)];b.userData.state='fly';b.userData.arm=arm;b.userData.timer=0;b.userData.life=0;b.userData.target=new THREE.Vector3(arm.x+(Math.random()-.5)*.36,1.04,-.1+Math.random()*2.65);b.position.set((Math.random()-.5)*5,2.3+Math.random()*1.5, -2.5+Math.random()*4);b.scale.setScalar(.9+Math.random()*.3);scene.add(b);bugs.push(b);beep(650,.09,'sine',.012)}
+const bugs=[];let score=0,bites=0,time=60,running=false,last=0,spawn=0,soundOn=true,audio=null;
+const $=s=>document.querySelector(s),scoreEl=$('#score'),bitesEl=$('#bites'),timeEl=$('#time'),bar=$('#bitebar'),bitefill=$('#bitefill'),toast=$('#toast');
+const pointer=new THREE.Vector2(),raycaster=new THREE.Raycaster(),targetPlane=new THREE.Plane(new THREE.Vector3(0,1,0),-.78),hitPoint=new THREE.Vector3();
+function beep(freq=420,duration=.07,type='sine',volume=.04){if(!soundOn)return;try{audio??=new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),v=audio.createGain();o.type=type;o.frequency.value=freq;v.gain.setValueAtTime(volume,audio.currentTime);v.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(v);v.connect(audio.destination);o.start();o.stop(audio.currentTime+duration)}catch{}}
+function notify(t){toast.textContent=t;toast.classList.add('show');clearTimeout(notify.t);notify.t=setTimeout(()=>toast.classList.remove('show'),800)}
+function spawnBug(){if(bugs.length>=5)return;const b=bugMesh(),arm=arms[Math.floor(Math.random()*2)];b.userData={state:'fly',arm,timer:0,life:0,phase:Math.random()*6,target:new THREE.Vector3(arm.x+(Math.random()-.5)*.32,.82,-.15+Math.random()*2.65)};b.position.set((Math.random()-.5)*4.8,2.1+Math.random()*1.4,-2.6+Math.random()*3.8);b.scale.setScalar(.85+Math.random()*.35);scene.add(b);bugs.push(b);beep(660,.08,'sine',.01)}
 function removeBug(b){scene.remove(b);const i=bugs.indexOf(b);if(i>=0)bugs.splice(i,1)}
 function updateHUD(){scoreEl.textContent=String(score).padStart(2,'0');bitesEl.innerHTML=bites+' <small>/ 5</small>';timeEl.textContent=Math.ceil(time)}
-function gameOver(won){running=false;bar.classList.remove('active');document.querySelector('#intro').textContent=won?'¡Sobreviviste! Por ahora, la casa es tuya.':'Te hicieron un colador. La próxima vez, no les tengas tanta paciencia.';document.querySelector('#start').textContent='VOLVER A INTENTAR';document.querySelector('.eyebrow').textContent=won?'VICTORIA':'FIN DE LA PARTIDA';document.querySelector('.bigmosq').textContent=won?'🏆':'🦟';document.querySelector('h1').innerHTML=won?'BRAZOS<br><span>LIBRES.</span>':'TE<br><span>PICARON.</span>';document.querySelector('.instructions').innerHTML='<div class="instruction"><b>ELIMINADOS</b>'+score+' mosquitos</div><div class="instruction"><b>PICADURAS</b>'+bites+' de 5</div>';document.querySelector('#overlay').classList.remove('hidden');}
-function startGame(){bugs.slice().forEach(removeBug);score=0;bites=0;time=60;spawn=.7;running=true;updateHUD();document.querySelector('#overlay').classList.add('hidden');document.querySelector('.eyebrow').textContent='UN JUEGO DE REFLEJOS';document.querySelector('.bigmosq').textContent='🦟';document.querySelector('h1').innerHTML='MOSQUITO<br><span>ZAP.</span>';document.querySelector('.instructions').innerHTML='<div class="instruction"><b>01 — DETECTÁ</b>Seguí el zumbido. Mirá dónde aterriza.</div><div class="instruction"><b>02 — REACCIONÁ</b>Apuntá y hacé click antes de que pique.</div>';document.querySelector('#start').textContent='EMPEZAR A CAZAR';}
-function slap(){if(!running)return;slapUntil=performance.now()+180;hand.scale.setScalar(1.22);setTimeout(()=>hand.scale.setScalar(1),100);let chosen=null,best=.18;for(const b of bugs){if(b.userData.state!=='land')continue;const p=b.position.clone().project(camera);const d=Math.hypot(p.x-pointer.x,p.y-pointer.y);if(d<best){best=d;chosen=b}}if(chosen){removeBug(chosen);score++;updateHUD();notify('¡ZAP! +1');beep(180,.11,'triangle',.07);beep(90,.1,'sawtooth',.025)}else{notify('¡PLOP! AL AIRE');beep(150,.06,'triangle',.025)}}
-renderer.domElement.addEventListener('pointermove',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(pointer,camera);if(raycaster.ray.intersectPlane(targetPlane,hitPoint)){hand.position.set(THREE.MathUtils.clamp(hitPoint.x,-3.1,3.1),.96,THREE.MathUtils.clamp(hitPoint.z,-2.6,3.1))}});
-renderer.domElement.addEventListener('pointerdown',e=>{if(e.button===0)slap()});
-addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();slap()}});
-document.querySelector('#start').addEventListener('click',startGame);
-document.querySelector('#sound').addEventListener('click',()=>{soundOn=!soundOn;document.querySelector('#sound').textContent='♫ SONIDO: '+(soundOn?'ON':'OFF');if(soundOn)beep(520)});
+function gameOver(won){running=false;bar.classList.remove('active');$('#intro').textContent=won?'¡Sobreviviste! Por ahora, la casa es tuya.':'Te hicieron un colador. La próxima vez, reaccioná más rápido.';$('#start').textContent='VOLVER A INTENTAR';$('.eyebrow').textContent=won?'VICTORIA':'FIN DE LA PARTIDA';$('.bigmosq').textContent=won?'🏆':'🦟';$('h1').innerHTML=won?'BRAZOS<br><span>LIBRES.</span>':'TE<br><span>PICARON.</span>';$('.instructions').innerHTML='<div class="instruction"><b>ELIMINADOS</b>'+score+' mosquitos</div><div class="instruction"><b>PICADURAS</b>'+bites+' de 5</div>';$('#overlay').classList.remove('hidden')}
+function startGame(){bugs.slice().forEach(removeBug);score=0;bites=0;time=60;spawn=.65;running=true;updateHUD();$('#overlay').classList.add('hidden');$('.eyebrow').textContent='UN JUEGO DE REFLEJOS';$('.bigmosq').textContent='🦟';$('h1').innerHTML='MOSQUITO<br><span>ZAP.</span>';$('.instructions').innerHTML='<div class="instruction"><b>01 — DETECTÁ</b>Seguí el zumbido. Mirá dónde aterriza.</div><div class="instruction"><b>02 — REACCIONÁ</b>Apuntá y hacé click antes de que pique.</div>';$('#start').textContent='EMPEZAR A CAZAR'}
+function slap(){if(!running)return;let chosen=null,best=.16;for(const b of bugs){if(b.userData.state!=='land')continue;const p=b.position.clone().project(camera),d=Math.hypot(p.x-pointer.x,p.y-pointer.y);if(d<best){best=d;chosen=b}}if(chosen){removeBug(chosen);score++;notify('¡ZAP! +1');beep(170,.12,'triangle',.07);beep(80,.09,'sawtooth',.025)}else{notify('¡PLOP! AL AIRE');beep(140,.06,'triangle',.02)}updateHUD()}
+renderer.domElement.addEventListener('pointermove',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;raycaster.setFromCamera(pointer,camera);raycaster.ray.intersectPlane(targetPlane,hitPoint)});
+renderer.domElement.addEventListener('pointerdown',e=>{if(e.button===0)slap()});addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();slap()}});
+$('#start').addEventListener('click',startGame);$('#sound').addEventListener('click',()=>{soundOn=!soundOn;$('#sound').textContent='♫ SONIDO: '+(soundOn?'ON':'OFF');if(soundOn)beep(520)});
 function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000||0,.04);last=now;const t=now*.001;
- hand.visible=running;hand.rotation.x=Math.sin(t*1.7)*.035;
- if(running){time-=dt;if(time<=0){time=0;updateHUD();gameOver(true)}spawn-=dt;if(spawn<=0){spawnBug();spawn=Math.max(.72,2.4-score*.035)+Math.random()*.7}
- let biting=false,nearest=1;
- for(const b of [...bugs]){const u=b.userData;u.life+=dt;u.phase=(u.phase||0)+dt*26;u.wings.forEach((w,i)=>{w.rotation.z=Math.sin(u.phase+i*Math.PI)*.85});
- if(u.state==='fly'){const dest=u.target;const dir=dest.clone().sub(b.position);if(dir.length()<.12){u.state='land';u.timer=0;b.position.copy(dest);notify('¡EN TU BRAZO!')}else{b.position.add(dir.normalize().multiplyScalar(dt*2.5));b.position.y+=Math.sin(t*12+u.life)*dt*.8}b.lookAt(dest.x,b.position.y,dest.z)}
- else{u.timer+=dt;b.position.y=1.05+Math.sin(t*10+u.life)*.012;b.rotation.z=Math.sin(t*5+u.life)*.12;const remaining=Math.max(0,1-u.timer/4.2);if(remaining<nearest){nearest=remaining;biting=true}if(u.timer>4.2){bites++;updateHUD();notify('¡TE PICÓ!');beep(95,.22,'sawtooth',.06);removeBug(b);if(bites>=5){gameOver(false);break}}}
- }
- if(biting){bar.classList.add('active');bitefill.style.transform='scaleX('+nearest+')'}else bar.classList.remove('active');updateHUD();}
+ if(running){time-=dt;if(time<=0){time=0;updateHUD();gameOver(true)}spawn-=dt;if(spawn<=0){spawnBug();spawn=Math.max(.72,2.35-score*.03)+Math.random()*.65}
+ let biting=false,nearest=1;for(const b of [...bugs]){const u=b.userData;u.life+=dt;u.phase+=dt*32;u.wings.forEach((w,i)=>w.rotation.z=Math.sin(u.phase+i*Math.PI)*.85);
+ if(u.state==='fly'){const d=u.target.clone().sub(b.position);if(d.length()<.12){u.state='land';u.timer=0;b.position.copy(u.target);notify('¡EN TU BRAZO!')}else{b.position.add(d.normalize().multiplyScalar(dt*2.5));b.position.y+=Math.sin(t*12+u.life)*dt*.65}b.lookAt(u.target.x,b.position.y,u.target.z)}
+ else{u.timer+=dt;b.position.y=.83+Math.sin(t*10+u.life)*.009;b.rotation.z=Math.sin(t*5+u.life)*.12;const rem=Math.max(0,1-u.timer/4.2);if(rem<nearest){nearest=rem;biting=true}if(u.timer>4.2){bites++;updateHUD();notify('¡TE PICÓ!');beep(90,.2,'sawtooth',.055);removeBug(b);if(bites>=5){gameOver(false);break}}}}
+ if(biting){bar.classList.add('active');bitefill.style.transform='scaleX('+nearest+')'}else bar.classList.remove('active');updateHUD()}
  renderer.render(scene,camera)}
 requestAnimationFrame(animate);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2))});
-</script>
-</body></html>
+</script></body></html>
